@@ -1,0 +1,39 @@
+{
+  "$comment": "GDV AI-KIT: starting point for the organization's managed settings (docs/platform.md). Owned by IT/platform, installed on each machine (macOS: /Library/Application Support/ClaudeCode/managed-settings.json) or pushed as server-managed settings from the Claude admin console. Engineers cannot override these keys. Review every line with the platform owner before rollout; remove this $comment key.",
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/id_rsa*)",
+      "Read(~/.aws/**)",
+      "Read(~/.ssh/**)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)"
+    ],
+    "disableBypassPermissionsMode": "disable"
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "enabledPlugins": {
+    "gdv-ai-kit@globaldev": true
+  },
+  "allowManagedHooksOnly": false,
+  "allowedMcpServers": [
+    { "serverName": "windshift" },
+    { "serverName": "atlassian" },
+    { "serverName": "github" },
+    { "serverName": "gitlab" }
+  ],
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "https://otel.globaldev.internal:4317"
+  },
+  "cleanupPeriodDays": 30
+}

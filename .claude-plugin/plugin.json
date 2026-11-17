@@ -1,0 +1,24 @@
+{
+  "name": "gdv-ai-kit",
+  "displayName": "GDV AI-KIT",
+  "version": "1.2.5",
+  "description": "GDV AI-KIT: GlobalDev's AI-native software lifecycle on Anthropic's AI-native SDLC playbook. The repo is the axis (intent, spec, plan, tests per change); skills by stage (intent, spec, build with plan mode and verifier, QC test, AI review gated by a hook, maintain from production signals) load from plain words; approval gates as hooks; work log in the repo; Jira and Windshift read when needed. Workflow: https://claude.ai/artifact/4GBYPhAQbU6EPcZESM1fMa",
+  "author": {
+    "name": "GlobalDev"
+  },
+  "homepage": "https://claude.ai/artifact/DXrKxDZrtuDzMAqqHDhCF8",
+  "keywords": [
+    "globaldev",
+    "ai-native-sdlc",
+    "intent",
+    "spec",
+    "plan-mode",
+    "review",
+    "hooks",
+    "qc",
+    "jira",
+    "windshift",
+    "worklog",
+    "outsourcing"
+  ]
+}

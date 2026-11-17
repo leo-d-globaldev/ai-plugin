@@ -1,0 +1,64 @@
+# GDV AI-KIT evals job, written into the project's .gitlab-ci.yml by /ship-init (after a yes). Not part of the plugin repo's own CI.
+# Runs when CLAUDE.md, .claude/ or evals/ change. The plugin (hook, skills) is cloned from the plugin repo.
+# CI/CD variables, set by a maintainer in Settings > CI/CD > Variables, never in a file:
+#   GDV_AI_KIT_REPO      git URL of the gdv-ai-kit plugin repo (not secret unless it embeds a token)
+#   GDV_AI_KIT_REF       optional: tag or branch to pin the plugin (default: the repo's default branch)
+#   ANTHROPIC_API_KEY    masked; needed only by the task evals
+# Missing GDV_AI_KIT_REPO: nothing runs. Missing ANTHROPIC_API_KEY: hook evals run, task evals are skipped.
+# Either way the job ends with exit code 77, which allow_failure shows as an orange warning, not green and not red.
+# The stage `test` must exist in this project's `stages:` (default stages include it); /ship-init says so when it is missing.
+# The runner (run.py, on-change.sh, worklog-cases.py) comes from the plugin clone; the cases stay in this project's evals/.
+gdv-ai-kit-evals:
+  stage: test
+  image: node:22-bookworm   # has git and python3
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes: [CLAUDE.md, .claude/**/*, evals/**/*, .gitlab-ci.yml]
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+      changes: [CLAUDE.md, .claude/**/*, evals/**/*, .gitlab-ci.yml]
+  allow_failure:
+    exit_codes: 77
+  variables:
+    GIT_DEPTH: "0"
+  script:
+    - |
+      if [ -z "$GDV_AI_KIT_REPO" ]; then
+        echo "WARNING: GDV_AI_KIT_REPO is not set: the GDV AI-KIT evals did not run. Set it in Settings > CI/CD > Variables."
+        exit 77
+      fi
+      if [ -n "$CI_MERGE_REQUEST_DIFF_BASE_SHA" ]; then
+        BASE="$CI_MERGE_REQUEST_DIFF_BASE_SHA"
+      elif [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+        git fetch -q origin "$CI_DEFAULT_BRANCH"
+        BASE="$(git merge-base FETCH_HEAD HEAD || true)"
+        [ -n "$BASE" ] || BASE="FETCH_HEAD"
+      elif [ -n "$CI_COMMIT_BEFORE_SHA" ] && [ "$CI_COMMIT_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+        BASE="$CI_COMMIT_BEFORE_SHA"
+      else
+        BASE="HEAD~1"
+      fi
+      echo "Diff base: $BASE"
+      if [ -n "$GDV_AI_KIT_REF" ]; then
+        git clone -q --depth 1 --branch "$GDV_AI_KIT_REF" "$GDV_AI_KIT_REPO" "$CI_PROJECT_DIR/../gdv-ai-kit"
+      else
+        git clone -q --depth 1 "$GDV_AI_KIT_REPO" "$CI_PROJECT_DIR/../gdv-ai-kit"
+      fi
+      export AI_DLC_PLUGIN_DIR="$(cd "$CI_PROJECT_DIR/../gdv-ai-kit" && pwd)"   # name read by evals/run.py
+      cp "$AI_DLC_PLUGIN_DIR/evals/run.py" "$AI_DLC_PLUGIN_DIR/evals/on-change.sh" "$AI_DLC_PLUGIN_DIR/evals/worklog-cases.py" evals/
+      [ -f evals/thresholds.json ] || cp "$AI_DLC_PLUGIN_DIR/evals/thresholds.json" evals/
+      chmod +x evals/on-change.sh
+      if [ -n "$ANTHROPIC_API_KEY" ]; then
+        npm install -g @anthropic-ai/claude-code@2.1.260   # pinned: a CLI update must not change results unnoticed; bump on purpose
+        evals/on-change.sh --base "$BASE"
+      else
+        code=0
+        evals/on-change.sh --base "$BASE" --skip-task > evals.log 2>&1 || code=$?
+        cat evals.log
+        [ "$code" -eq 0 ] || exit "$code"
+        if grep -q "^Task evals skipped" evals.log; then
+          echo "WARNING: task evals were NOT run (no ANTHROPIC_API_KEY)."
+          exit 77
+        fi
+      fi

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "windshift": {
+      "type": "http",
+      "url": "https://windshift.example.com/mcp"
+    }
+  }
+}
