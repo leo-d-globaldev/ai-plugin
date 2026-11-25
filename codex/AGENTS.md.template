@@ -1,0 +1,10 @@
+# AGENTS.md
+
+This repo uses the GDV AI-KIT. Project settings are in the `## AI-KIT` section of `CLAUDE.md`
+(Codex reads it when `project_doc_fallback_filenames` includes `CLAUDE.md`); the person's role is in
+`AGENTS.local.md` (`## AI-KIT me`, not committed).
+
+- Start work with plain words ("khách muốn ...", "làm PROJ-123") or `$gdv-ai-kit:ship`.
+- State lives in `intent/<ID>/` and git. Gates (push without review, force push, protected paths) are hooks: if one
+  denies, say so and ask the person; never work around it.
+- Data class C: do not read or change the code; stop.

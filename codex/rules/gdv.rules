@@ -1,0 +1,35 @@
+# GDV AI-KIT: Codex command rules. Copy to ~/.codex/rules/gdv.rules (or <repo>/.codex/rules/gdv.rules).
+# "prompt" makes Codex ask the person before the command runs; this layer works without the hook trust step.
+# Change a decision to "forbidden" only where your project allows no exception.
+
+prefix_rule(
+    pattern = ["terraform", "apply"],
+    decision = "prompt",
+    justification = "GDV AI-KIT: a production change is a person's decision.",
+    match = [["terraform", "apply"], ["terraform", "apply", "-auto-approve"]],
+    not_match = [["terraform", "plan"]],
+)
+
+prefix_rule(
+    pattern = ["kubectl", "apply"],
+    decision = "prompt",
+    justification = "GDV AI-KIT: a production change is a person's decision.",
+    match = [["kubectl", "apply", "-f", "deploy.yaml"]],
+    not_match = [["kubectl", "get", "pods"]],
+)
+
+prefix_rule(
+    pattern = ["helm", "upgrade"],
+    decision = "prompt",
+    justification = "GDV AI-KIT: a production change is a person's decision.",
+    match = [["helm", "upgrade", "app", "./chart"]],
+    not_match = [["helm", "list"]],
+)
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "GDV AI-KIT: pushing needs a review of HEAD; the hook checks it, a person confirms it.",
+    match = [["git", "push", "origin", "feat"], ["git", "push", "--force", "origin", "feat"]],
+    not_match = [["git", "status"], ["git", "pull"]],
+)

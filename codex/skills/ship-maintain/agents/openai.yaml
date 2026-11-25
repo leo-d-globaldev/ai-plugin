@@ -1,0 +1,3 @@
+# Codex does not read disable-model-invocation. This file makes the skill explicit-only: $gdv-ai-kit:NAME still works.
+policy:
+  allow_implicit_invocation: false

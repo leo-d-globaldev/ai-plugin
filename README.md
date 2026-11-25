@@ -14,6 +14,17 @@ Claude plugin for GlobalDev's AI-native software lifecycle, built on Anthropic's
 
 Source repo: `https://github.com/leo-d-globaldev/ai-plugin`.
 
+## Codex
+
+`codex/` is the same kit built for OpenAI Codex (0.3.0, Codex CLI 0.169): skills are called `$gdv-ai-kit:ship`, `$gdv-ai-kit:ship-build`, and the gates are rewritten for how Codex runs hooks. Install it **instead of** the Claude plugin on a Codex machine, not next to it (same plugin name). Clone this repo, then:
+
+```bash
+codex plugin marketplace add ./ai-plugin/codex
+codex plugin add gdv-ai-kit@gdv-ai-kit-codex
+```
+
+Then trust the hooks (`/hooks` in Codex), copy `codex/rules/gdv.rules` to `~/.codex/rules/` and merge `codex/config.toml.template` into `~/.codex/config.toml`. Gates and the approval token: `codex/README.md`.
+
 ## Getting started
 
 1. In the project repo run `/ship-init` once: it sets up `CLAUDE.md` (with the `## AI-KIT` section), `REVIEW.md`, the intent home (a folder, a sparse checkout, or a separate docs repo for large monorepos and multi-repo projects), the data class, the tracker (`jira`, `windshift` or none) and your role.

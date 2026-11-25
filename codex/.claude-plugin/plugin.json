@@ -1,0 +1,6 @@
+{
+  "name": "gdv-ai-kit",
+  "displayName": "GDV AI-KIT for Codex",
+  "version": "0.3.0",
+  "description": "GDV AI-KIT for Codex: the ten ship skills and policy-client-data, approval gates as hooks (push without review, force push, protected paths, bug-fix lock, production deploys) and the work log. Install instead of, not next to, the Claude plugin on a Codex machine."
+}

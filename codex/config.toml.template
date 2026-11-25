@@ -1,0 +1,8 @@
+# GDV AI-KIT: Codex config. Merge into ~/.codex/config.toml (all projects) or <repo>/.codex/config.toml.
+
+# Read the project's CLAUDE.md (its AI-KIT section) as project instructions when there is no AGENTS.md.
+project_doc_fallback_filenames = ["CLAUDE.md"]
+
+# The tracker connection, if the project uses one. Replace the URL; do not put a token here.
+# [mcp_servers.tracker]
+# url = "https://TRACKER.example.com/mcp"

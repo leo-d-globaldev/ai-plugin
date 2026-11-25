@@ -1,0 +1,16 @@
+{
+  "name": "gdv-ai-kit-codex",
+  "owner": {
+    "name": "GlobalDev"
+  },
+  "metadata": {
+    "description": "GDV AI-KIT for OpenAI Codex (install instead of the Claude plugin on a Codex machine)."
+  },
+  "plugins": [
+    {
+      "name": "gdv-ai-kit",
+      "source": "./",
+      "description": "GDV AI-KIT for Codex: ship skills, approval gates as hooks, work log."
+    }
+  ]
+}
