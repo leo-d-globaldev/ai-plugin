@@ -14,16 +14,31 @@ Claude plugin for GlobalDev's AI-native software lifecycle, built on Anthropic's
 
 Source repo: `https://github.com/leo-d-globaldev/ai-plugin`.
 
-## Codex
+## Install on Codex
 
-`codex/` is the same kit built for OpenAI Codex (0.3.0, Codex CLI 0.169): skills are called `$gdv-ai-kit:ship`, `$gdv-ai-kit:ship-build`, and the gates are rewritten for how Codex runs hooks. Install it **instead of** the Claude plugin on a Codex machine, not next to it (same plugin name). Clone this repo, then:
+`codex/` is the same kit built for OpenAI Codex (0.3.0, Codex CLI 0.169). Skills are called `$gdv-ai-kit:ship`, `$gdv-ai-kit:ship-build` and so on, and the gates are rewritten for how Codex runs hooks (Codex ignores `ask`, so every ask becomes a deny with an approval token). Install it **instead of** the Claude plugin on a Codex machine, not next to it: both are named `gdv-ai-kit` and would clash.
 
-```bash
-codex plugin marketplace add ./ai-plugin/codex
-codex plugin add gdv-ai-kit@gdv-ai-kit-codex
-```
+1. Clone this repo and add the Codex plugin:
 
-Then trust the hooks (`/hooks` in Codex), copy `codex/rules/gdv.rules` to `~/.codex/rules/` and merge `codex/config.toml.template` into `~/.codex/config.toml`. Gates and the approval token: `codex/README.md`.
+   ```bash
+   git clone https://github.com/leo-d-globaldev/ai-plugin.git
+   codex plugin marketplace add ./ai-plugin/codex
+   codex plugin add gdv-ai-kit@gdv-ai-kit-codex
+   ```
+
+2. **Trust the hooks.** Open Codex, type `/hooks` and trust the PreToolUse hook. A plugin hook runs only after the person trusts it, a changed hook needs trust again, and without it the gates do nothing and Codex does not say so.
+3. Copy the prefix rules and merge the config (it makes Codex read the project's `CLAUDE.md`, so the `## AI-KIT` section applies):
+
+   ```bash
+   mkdir -p ~/.codex/rules && cp ai-plugin/codex/rules/gdv.rules ~/.codex/rules/
+   cat ai-plugin/codex/config.toml.template   # merge into ~/.codex/config.toml
+   ```
+
+4. Optional second layer for pushes: `cp ai-plugin/codex/pre-push.sh .git/hooks/pre-push` in the project repo, with `GDV_CODEX_HOOK` pointing at `gates_codex.py` when it is not next to the script.
+5. In the project repo run `$gdv-ai-kit:ship-init` once (writes the `## AI-KIT` section, `AGENTS.local.md` with your role, `AGENTS.md`), then `$gdv-ai-kit:ship-doctor`.
+6. Check the gate: ask Codex to run `git push --force origin x`; it must say the force-push gate blocked it.
+
+To update, `git pull` in the clone and run `codex plugin add gdv-ai-kit@gdv-ai-kit-codex` again; trust the hooks again if they changed. Gates, the approval token and its limits: `codex/README.md`.
 
 ## Getting started
 
