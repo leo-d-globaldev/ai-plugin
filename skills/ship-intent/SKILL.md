@@ -13,7 +13,7 @@ Every stop after `work-log.py start` calls `work-log.py stop <ID> --outcome X` f
 
 No shell (claude.ai, Cowork): skip the `work-log.py` steps and say so in one line.
 
-1. **Config.** `## AI-KIT` section; class C → stop. Find the intent home (CONVENTIONS §2). A separate docs repo that is not reachable → say where to clone it, or how to reach it through the Git connector, and stop.
+1. **Config.** `## AI-KIT` section and the effective `mode` by CONVENTIONS §1 (argument, then `CLAUDE.local.md`, then `CLAUDE.md`); class C → stop. Find the intent home (CONVENTIONS §2). A separate docs repo that is not reachable → say where to clone it, or how to reach it through the Git connector, and stop.
 2. **Source.**
    - A ticket key → `get-item`; ID = the key; `source: ticket`. An intent for that ID already exists → open it and continue it instead of writing a new one. A ticket that is already accepted for work follows the ticket rule of CONVENTIONS §2 (`status: approved`, `approved: "ticket KEY"`): skip the approval of step 5 and say so; write a draft only when the ticket is itself a raw request still to be decided.
    - Text, a file or a conversation → ID = `YYYYMMDD-short-slug`; `source: idea`.

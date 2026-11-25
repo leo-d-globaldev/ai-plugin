@@ -25,7 +25,7 @@ def section(path, name):
     except OSError:
         return None
     m = re.search(rf"^## {re.escape(name)}\s*$(.*?)(?=^## |\Z)", text, re.S | re.M)
-    return dict(re.findall(r"^-\s*([a-z-]+):\s*(\S[^#\n]*?)\s*(?:#.*)?$", m.group(1), re.M)) if m else None
+    return dict(re.findall(r"^-[ \t]*([a-z-]+):[ \t]*(\S[^#\n]*?)[ \t]*(?:#.*)?$", m.group(1), re.M)) if m else None
 
 
 def front(path):
@@ -48,7 +48,10 @@ def main():
         return
     me = section(os.path.join(cwd, "CLAUDE.local.md"), "AI-KIT me") or {}
     home = os.path.normpath(os.path.join(cwd, kit.get("intent-home", "./intent")))
-    lines = [f"GDV AI-KIT repo. mode={kit.get('mode', 'manual')} data-class={kit.get('data-class', 'B?')} "
+    mode = me.get("mode", "").strip()
+    if mode not in ("manual", "semi-auto"):
+        mode = kit.get("mode", "manual")
+    lines = [f"GDV AI-KIT repo. mode={mode} data-class={kit.get('data-class', 'B?')} "
              f"adapter={kit.get('adapter', 'none')} intent-home={kit.get('intent-home', './intent')} "
              f"role={me.get('role', 'not set (run /ship-init)')}."]
     if kit.get("data-class", "").strip().upper() == "C":

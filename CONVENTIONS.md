@@ -18,11 +18,20 @@ In the project `CLAUDE.md` (written by `/ship-init`; template `templates/CLAUDE.
 - review-gate: block           # block | ask | off: push / PR of a commit with no AI review
 - qc-url:                      # optional: the QC environment
 - worklog: remind              # off | remind | strict
+- model-easy: sonnet/medium    # model and effort, MODEL/EFFORT; see "Model and effort" below
+- model-medium: sonnet/high
+- model-hard: opus/high
+- model-verify: sonnet/medium
+- model-review: opus/high
 ```
 
-Order of precedence: an argument (`--mode=`, `--adapter=`), then this section, then the default shown above (`adapter: none`, `intent-home: ./intent`, `data-class: B` when missing). No section → say "run /ship-init" once and go on with the defaults; never write the section yourself outside `/ship-init`.
+Order of precedence (`mode` and `qc-url` have a personal level, see below): an argument (`--mode=`, `--adapter=`), then this section, then the default shown above (`adapter: none`, `intent-home: ./intent`, `data-class: B` when missing). No section → say "run /ship-init" once and go on with the defaults; never write the section yourself outside `/ship-init`.
 
-The person's role(s) live in `CLAUDE.local.md` (not committed): `## AI-KIT me` with `- role: ba,qc` (values `po`, `ba`, `dev`, `lead`, `qc`, `pm`, or `all`). A role changes which work a skill lists first; it never opens a gate.
+The person's own settings live in `CLAUDE.local.md` (not committed): `## AI-KIT me` with `- role: ba,qc` (values `po`, `ba`, `dev`, `lead`, `qc`, `pm`, or `all`), and optionally `- mode: semi-auto`, `- qc-url: URL` and the `model-*` keys below. A role changes which work a skill lists first; it never opens a gate.
+
+Personal overrides, only `mode`, `qc-url` and the `model-*` keys: `mode` = the `--mode=` argument, then `CLAUDE.local.md`, then `CLAUDE.md`, then `manual`; `qc-url` = `CLAUDE.local.md`, then `CLAUDE.md`, then ask; each `model-*` key = `CLAUDE.local.md`, then `CLAUDE.md`, then not set. A local `mode` outside `manual|semi-auto` is ignored (and `/ship-doctor` says so). Every other key (`data-class`, `review-gate`, `worklog`, ...) is team policy and is read from `CLAUDE.md` only; nothing in the repo may depend on a person's local values.
+
+**Model and effort** (optional; none set = every session inherits, as before). Five keys: `model-easy`, `model-medium`, `model-hard` (the session that builds, by the rating of `/ship-build`), `model-verify` (the verifier session), `model-review` (the review session). Value `MODEL/EFFORT`; either part may be left out (`sonnet`, `/high`); empty or `default` = the session's own. Claude: MODEL `opus`, `sonnet`, `haiku` or a full id; EFFORT `low|medium|high|xhigh|max`. Codex: any model id; EFFORT `none|minimal|low|medium|high|xhigh|max` (the model decides which it accepts). Read them with `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/kit-config.py" models [--rating easy|medium|hard]` (effective value and source per key; a bad value is reported and skipped; it never fails). Written and changed by `/ship-init`; `/ship-doctor` checks them. They choose cost and speed only, never open a gate. A skill cannot change the model of its own running session: for the building session it shows the configured value and, when this session differs, says once what to type (`/model`, `/effort`); for the verifier and review sessions it passes the values to the host when it starts them (§6). A host that cannot apply a value (no such option, or a model above the calling session's) is said in the one line the skill prints (`Verifier: model sonnet, effort medium, from CLAUDE.md; not applied: REASON`) and the run goes on; the work log records what actually ran.
 
 **Data class C** (the customer forbids AI on its code or data): every skill stops on its first line and says why. **Class B**: no customer data (production dumps, real personal data, secrets) goes into a prompt, a fixture or an intent file; use synthetic data.
 
@@ -73,6 +82,7 @@ The state of the work is read from these files and git, never from memory: `/shi
 
 - `manual` (default): ask at each decision point named in the skill.
 - `semi-auto`: skip confirmations; an unclear point goes to the `## Open questions` of the file being written; the skill takes the safest option and tags its lines `[auto]`.
+- Which mode applies: section 1 (argument, then `CLAUDE.local.md`, then `CLAUDE.md`).
 - In both modes the gates in section 5 stay human.
 
 ## 4. Work log (committed, for later analysis)
@@ -89,7 +99,7 @@ Known limits (internal use; accepted, not fixed): a review file in `.gdv/reviews
 
 ## 6. Sessions
 
-Delegated work (the verifier, the review pass) runs in a **fresh session** started with the host tool `start_session` (`context: "fresh"`, a prompt that holds everything it needs, `wake_when_done: true`) **in the same folder as the current session** (`use_worktree: false`; never a new worktree, which could hold other code). Its result file goes to `.gdv/tmp/` in that folder. Read the result file the session left, not its short note. No `start_session` in this host → run it inline and say in the result that it was not independent.
+Delegated work (the verifier, the review pass) runs in a **fresh session** started with the host tool `start_session` (`context: "fresh"`, a prompt that holds everything it needs, `wake_when_done: true`) **in the same folder as the current session** (`use_worktree: false`; never a new worktree, which could hold other code). Its result file goes to `.gdv/tmp/` in that folder. Pass `model` and `effort` from `model-verify` or `model-review` (§1) when set; unset or a host without those options → omit them. Read the result file the session left, not its short note. No `start_session` in this host → run it inline and say in the result that it was not independent.
 
 Several tickets at once: one session per ticket, each in its own worktree (`claude --worktree PROJ-123`), see `docs/parallel-sessions.md`.
 

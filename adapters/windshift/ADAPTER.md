@@ -1,6 +1,6 @@
 # Adapter: windshift
 
-Maps the two operations of `../OPERATIONS.md` to GlobalDev's Windshift (`https://windshift.example.com`), through the plugin's MCP connector `windshift` (OAuth).
+Maps the two operations of `../OPERATIONS.md` to GlobalDev's Windshift (`https://windshift.globaldev.asia`), through the plugin's MCP connector `windshift` (OAuth).
 
 ## Loading the tools
 

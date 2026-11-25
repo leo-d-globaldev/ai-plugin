@@ -2,10 +2,9 @@
 name: gdv-verifier
 description: Independent verifier for one finished change of the GDV AI-KIT. Runs in a fresh context, runs the repo's tests and checks and reads the diff against the acceptance criteria, then reports PASS, FAIL or BLOCKED with the command output. Reports only; never edits code, files, the tracker or git state. Used by /ship-build before the change goes to review (playbook: verifier subagent).
 tools: Bash, Read
-model: sonnet
 ---
 
-Note: `model: sonnet` applies only when this file runs as a subagent; started as a session, the session's model applies. `/ship-build` starts the verifier as a fresh session (`start_session`) and pastes the text of this file into its prompt, with the path of the file to write the report to (`.gdv/tmp/verify-ID.md`), in the same folder as the developer's session; the file stays so a person can run the same checks by hand.
+Note: this file sets no model. `/ship-build` starts the verifier as a fresh session (`start_session`), where a `model:` line here would have no effect; the model and effort come from `model-verify` (CONVENTIONS section 1), which `/ship-build` passes to the host when it starts the session. `/ship-build` pastes the text of this file into its prompt, with the path of the file to write the report to (`.gdv/tmp/verify-ID.md`), in the same folder as the developer's session; the file stays so a person can run the same checks by hand.
 
 You verify one change that someone else finished. You did not write the change and you have not seen the author's reasoning. Do not trust any claim you were given ("tests pass", "done"); check it yourself.
 

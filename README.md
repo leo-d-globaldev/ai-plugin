@@ -9,9 +9,10 @@ Claude plugin for GlobalDev's AI-native software lifecycle, built on Anthropic's
 ## Install
 
 - From the GlobalDev organization's plugin library on claude.ai (enabled for everyone through managed settings, `docs/platform.md`).
+- From git, for people outside the org library: `/plugin marketplace add https://github.com/leo-d-globaldev/ai-plugin.git`, then `/plugin install gdv-ai-kit@gdv-ai-kit` (uses the repo's `.claude-plugin/marketplace.json`).
 - For a local test of a clone: `claude --plugin-dir PATH_TO_CLONE`.
 
-Source repo: internal.
+Source repo: `https://github.com/leo-d-globaldev/ai-plugin`.
 
 ## Getting started
 
@@ -53,13 +54,14 @@ Two operations only, used when needed: `get-item` (read a ticket to seed an inte
 
 ## Measuring
 
+- Model and effort: `model-*` keys of the `## AI-KIT` section (CONVENTIONS section 1), read by `scripts/kit-config.py models`.
 - Work log: one JSON file per skill run in `.ai/worklog/YYYY-MM/` (time, tokens, outcome, role, models and effort levels with tokens per pair; no names), committed with the work (`scripts/work-log.py`).
-- `scripts/metrics.py`: lead time (intent to merge), first-pass review rate, rework rate, AI cost per skill, role, model and effort, from git and the work log. Measure a baseline before the pilot.
-- OpenTelemetry per project: managed settings turn it on and name the collector; `/ship-init` tags the project (`project`, `data_class` in `OTEL_RESOURCE_ATTRIBUTES`), `/ship-doctor` checks it. See `docs/platform.md`.
+- `scripts/metrics.py`: lead time (intent to merge), first-pass review rate, rework rate, AI tokens per merged change and the share of them spent on rework, AI cost per skill, role, model and effort, from git and the work log. Measure a baseline before the pilot.
+- Usage telemetry (OpenTelemetry) is blocked: managed settings set `CLAUDE_CODE_ENABLE_TELEMETRY` to `0`, `/ship-doctor` reports it if it is on. See `docs/platform.md`.
 
 ## Platform
 
-`docs/platform.md`: data classes A/B/C per customer contract, managed settings (`templates/managed-settings.json`), sandbox, managed MCP, OpenTelemetry, the local review gate and its limits, the scheduled Maintain loop. `docs/client-ai-statement.md`: the one-page answer for customers (draft, needs legal review).
+`docs/platform.md`: data classes A/B/C per customer contract, managed settings (`templates/managed-settings.json`), sandbox, managed MCP, telemetry blocked, the local review gate and its limits, the scheduled Maintain loop. `docs/client-ai-statement.md`: the one-page answer for customers (draft, needs legal review).
 
 ## Evals
 
@@ -83,6 +85,12 @@ In a project: run `/ship-init` again (it replaces `## AI-DLC defaults` with `## 
 
 ## Changelog
 
+- **1.4.4** — Change (CPA-158): the repo carries `.claude-plugin/marketplace.json` (one entry, the plugin at the repo root) so it can be added with `/plugin marketplace add` and installed from git; `scripts/publish-staging.sh` leaves that file out of the copy published to claude.ai.
+- **1.4.3** — Change (CPA-158): usage telemetry is blocked instead of tagged: the managed settings template sets `CLAUDE_CODE_ENABLE_TELEMETRY` to `0` and no longer names a collector; `/ship-init` no longer writes `OTEL_RESOURCE_ATTRIBUTES`; `/ship-doctor` check 11 now reports telemetry that is on or a leftover tag; platform, client statement and workflow page updated.
+- **1.4.2** — Fix (CPA-158): the plugin is published from a clean copy made by `scripts/publish-staging.sh`, so `.ai/` (this repo's own work logs), `.gdv/` and `CLAUDE.local.md` are not shipped in the plugin; delete the copy after publishing.
+- **1.4.1** — Docs (CPA-158): the slides deck gets a second slide comparing AI-DLC (AWS) with the AI-native SDLC (Anthropic) and what GDV AI-KIT takes from it; the plugin description (claude.ai overview) lists the slides artifact under the workflow artifact.
+- **1.4.0** — Feature (20261118-model-effort-config): model and effort are chosen, not assumed. Keys `model-easy`, `model-medium`, `model-hard` (the session that builds, by the rating of `/ship-build`), `model-verify`, `model-review` in the `## AI-KIT` section (value `MODEL/EFFORT`, e.g. `sonnet/medium`), a personal value in `CLAUDE.local.md` wins; none set = every session inherits as before. `/ship-build` and `/ship-review` pass `model-verify` and `model-review` to `start_session` and print one line with the effective value (and `not applied: REASON` when the host cannot, e.g. a model above the calling session's); `/ship-init` asks for them (question 10), `/ship-doctor` checks their form (check 13). New `scripts/kit-config.py` reads them; eval kind `config` (12 cases). Fix: `agents/gdv-verifier.md` no longer carries `model: sonnet`, which had no effect when the verifier runs as a session.
+- **1.3.0** — Feature (20261118-per-person-mode): a person can set their own `mode` and `qc-url` in `CLAUDE.local.md` (`## AI-KIT me`) without changing the team's `CLAUDE.md`. Order for `mode`: `--mode=`, then `CLAUDE.local.md`, then `CLAUDE.md`, then `manual`; for `qc-url`: `CLAUDE.local.md`, then `CLAUDE.md`. Every other key stays team policy, and no gate changes. `/ship-init` asks for the personal values, `/ship-doctor` prints the effective mode and where it comes from, `hooks/context.py` follows the same order (test: `tests/context-mode.sh`).
 - **1.2.5** — Docs (CPA-158): the slides deck (`docs/ai-kit-slides.html`, published as its own artifact) is linked in the README overview and gets notes on the metrics slides; the workflow page's metrics section explains what each number means (with p85) and what counts as effective; fixes how lead time, first-pass review rate and rework rate are described to match `metrics.py` (ID from the commit subject, first-pass rate over reviewed intents only).
 - **1.2.4** — Fix (CPA-158): `/ship-init` asks its setup questions one at a time (default and options shown, questions already answerable from the repo skipped) instead of listing them all in one message.
 - **1.2.3** — Docs (CPA-158): the workflow page's "Sử dụng" tab is shorter (start, `/ship`, diagram, roles) and the rest moved to "Tài liệu chi tiết" (flows per project type, QC table); `/ship-init` is said to be a one-time step; new sections explain `/ship` with examples, the review hook (what the push gate does in each situation, sample review file), the work log (sample record, `show` and `report` output) and the metrics (sample `metrics.py` result and how each number is computed).

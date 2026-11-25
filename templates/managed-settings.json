@@ -29,11 +29,7 @@
     { "serverName": "gitlab" }
   ],
   "env": {
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
-    "OTEL_METRICS_EXPORTER": "otlp",
-    "OTEL_LOGS_EXPORTER": "otlp",
-    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
-    "OTEL_EXPORTER_OTLP_ENDPOINT": "https://otel.globaldev.internal:4317"
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0"
   },
   "cleanupPeriodDays": 30
 }

@@ -9,7 +9,7 @@ The fallback entry point. Most of the time the right skill loads by itself from 
 
 ## Flow
 
-1. **Read** the `## AI-KIT` section (class C → stop), the role in `CLAUDE.local.md` (none → treat as `all` and suggest `/ship-init` once), and the open intents (front matter of `<intent-home>/*/intent.md`, plus `tests.md` and `links.md`). Read-only so far.
+1. **Read** the `## AI-KIT` section (class C → stop), the role in `CLAUDE.local.md` (none → treat as `all` and suggest `/ship-init` once) and the effective `mode` by CONVENTIONS §1 (argument, then `CLAUDE.local.md`, then `CLAUDE.md`), and the open intents (front matter of `<intent-home>/*/intent.md`, plus `tests.md` and `links.md`). Read-only so far.
 2. **Pick** the skill from the person's words first, the state second:
 
    | Words or state | Skill |

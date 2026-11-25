@@ -2,7 +2,7 @@
   "mcpServers": {
     "windshift": {
       "type": "http",
-      "url": "https://windshift.example.com/mcp"
+      "url": "https://windshift.globaldev.asia/mcp"
     }
   }
 }

@@ -35,7 +35,7 @@ Read every `<intent-home>/*/intent.md` front matter on the main branch (`git fet
 
 ## --run
 
-1. `work-log.py start <ID> --skill ship-test`. Which build: the merged commit, or the QC environment (`qc-url` in the `## AI-KIT` section, else ask the person).
+1. `work-log.py start <ID> --skill ship-test`. Which build: the merged commit, or the QC environment (`qc-url` in `CLAUDE.local.md` under `## AI-KIT me`, else in the `## AI-KIT` section, else ask the person). Never write a personal `qc-url` from `CLAUDE.local.md` into a committed file (`tests.md`); name the environment instead.
 2. Run the e2e cases with the project's command; run UI and manual cases through the browser tool, step by step, taking a screenshot for each failure. Never use real customer data (class B) or production.
 3. Append a run block to `tests.md`: case, `pass | fail | not run`, note, screenshot path. Set intent `status: testing`.
 4. All pass → say the change can be accepted; setting `done` (and closing the ticket) is a person's decision (CONVENTIONS §5). Some fail → suggest `--bug` for each.

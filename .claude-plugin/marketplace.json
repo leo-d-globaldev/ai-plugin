@@ -1,0 +1,16 @@
+{
+  "name": "gdv-ai-kit",
+  "owner": {
+    "name": "GlobalDev"
+  },
+  "plugins": [
+    {
+      "name": "gdv-ai-kit",
+      "source": "./",
+      "description": "GDV AI-KIT: GlobalDev's AI-native SDLC (intent, spec, build, test, review, maintain) with approval gates as hooks."
+    }
+  ],
+  "metadata": {
+    "description": "GlobalDev plugins: GDV AI-KIT, the AI-native software lifecycle."
+  }
+}

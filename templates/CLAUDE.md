@@ -58,5 +58,11 @@ One sentence: what the project is and who uses it.
 - qc-signal: merge
 - tracker-comments: off
 - review-gate: block        # block | ask | off
-- qc-url:                    # QC environment, if any
+- qc-url:                    # QC environment, if any (a person may override it in CLAUDE.local.md)
 - worklog: remind
+# Model and effort per stage, MODEL/EFFORT (empty = the session's own); a person may override each in CLAUDE.local.md. Optional:
+# - model-easy: sonnet/medium
+# - model-medium: sonnet/high
+# - model-hard: opus/high
+# - model-verify: sonnet/medium
+# - model-review: opus/high

@@ -11,7 +11,7 @@ Stage 2 Design, play "Requirements and design": requirements and design in one w
 
 Every stop after `work-log.py start` calls `work-log.py stop <ID> --outcome X` first (CONVENTIONS §4): `gate` waiting for a person, `blocked` missing input, `failed`, `done`.
 
-1. **Config and intent.** `## AI-KIT` section; class C → stop. Open `<intent-home>/<ID>/intent.md`. No ID → list intents with `status: approved` and ask. `status: draft` → it needs approval first (who: CONVENTIONS §2); stop (`blocked`).
+1. **Config and intent.** `## AI-KIT` section and the effective `mode` by CONVENTIONS §1 (argument, then `CLAUDE.local.md`, then `CLAUDE.md`); class C → stop. Open `<intent-home>/<ID>/intent.md`. No ID → list intents with `status: approved` and ask. `status: draft` → it needs approval first (who: CONVENTIONS §2); stop (`blocked`).
    - `work-log.py start <ID> --skill ship-spec`.
 2. **Context.** Read the code areas the intent touches (in a multi-repo project: the repos in `repos:`, at the paths listed under `## Repos` in the docs repo's `CLAUDE.md` or reachable through `additionalDirectories`; say which were not read). Load the policy skills that apply: `policy-client-data` always; any other installed organization skill for security, API design, UX or brand whose description matches.
 3. **Write** `<intent-home>/<ID>/spec.md` from `${CLAUDE_PLUGIN_ROOT}/templates/intent/spec.md`:
